@@ -77,4 +77,12 @@ var callback = function(response) {
     });
 };
 
+var affordableHousing;
+
+$.when($.get('https://data.austintexas.gov/resource/wa68-dsqa.json')).then(function( data, textStatus, jqXHR ) {
+ console.log( jqXHR.response );
+ console.log( data );
+ affordableHousing = data;
+})
+
 censusModule.GEORequest(request, callback);
