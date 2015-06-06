@@ -27,11 +27,6 @@ var request = {
     ]
 };
 
-var polygonOptions = {	
-	color: "red", 
-	fillColor: "#f03"
-};
-
 function getColor(d) {
     return d < 20  ? '#800026' :
            d < 25  ? '#BD0026' :
@@ -64,16 +59,7 @@ var callback = function(response) {
 			return [data[1],data[0]];
 		});
 		var age = props.age;
-		console.log(age);
 		L.polygon(coords, style(age)).addTo(map);
-		//var myLatlng = new google.maps.LatLng(lat,lng);
-		//console.log(props);
-		//L.marker([lat, lng]).addTo(map);
-		/*var marker = new google.maps.Marker({
-			position: myLatlng,
-			map: map,
-			title: props.NAME		  
-		});*/
     });
 };
 
