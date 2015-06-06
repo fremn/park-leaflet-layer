@@ -64,7 +64,7 @@ var callback = function(response) {
 			return [data[1],data[0]];
 		});
 		var age = props.age;
-		L.polygon(coords, style(age)).addTo(map);
+		L.polygon(coords, style(age)).addTo(map).bringToBack();
 		//var myLatlng = new google.maps.LatLng(lat,lng);
 		//console.log(props);
 		//L.marker([lat, lng]).addTo(map);
@@ -75,15 +75,15 @@ var callback = function(response) {
 		});*/
     });
 };
-var affordableHousing;
+
+
 $.when($.get('https://data.austintexas.gov/resource/siyu-szxn.json')).then(
   function( data, textStatus, jqXHR ) {
-      affordableHousing = data;
+      var affordableHousing = data;
       _.each(affordableHousing, function(af) {
         var loc = af.location_1
         if (loc !== undefined && loc.hasOwnProperty('latitude') && loc.hasOwnProperty('longitude')) {
-          console.log(loc.longitude, loc.latitude);
-          L.circle([loc.latitude, loc.longitude], af.affordable_units).addTo(map);
+          map.addLayer(L.circle([loc.latitude, loc.longitude], (af.affordable_units)));
         }
 
       })
