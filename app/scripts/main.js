@@ -1,4 +1,3 @@
-console.log('\'Allo \'Allo!');
 var sdk = new CitySDK();
 var censusModule = sdk.modules.census;
 
@@ -36,7 +35,7 @@ var callback = function(response) {
 		var coords = feature.geometry.coordinates[0].map(function(data){
 			return [data[1],data[0]];
 		});
-		L.polygon(coords).addTo(map);
+		L.polygon(coords, {color: "#A6CFD5", weight: 1}).addTo(map);
 		//var myLatlng = new google.maps.LatLng(lat,lng);
 		//console.log(props);
 		//L.marker([lat, lng]).addTo(map);
