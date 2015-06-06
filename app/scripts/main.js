@@ -27,8 +27,8 @@ var request = {
     ]
 };
 
-var polygonOptions = {	
-	color: "red", 
+var polygonOptions = {
+	color: "red",
 	fillColor: "#f03"
 };
 
@@ -64,25 +64,29 @@ var callback = function(response) {
 			return [data[1],data[0]];
 		});
 		var age = props.age;
-		console.log(age);
-		L.polygon(coords, style(age)).addTo(map);
+		L.polygon(coords, style(age)).addTo(map).bringToBack();
 		//var myLatlng = new google.maps.LatLng(lat,lng);
 		//console.log(props);
 		//L.marker([lat, lng]).addTo(map);
 		/*var marker = new google.maps.Marker({
 			position: myLatlng,
 			map: map,
-			title: props.NAME		  
+			title: props.NAME
 		});*/
     });
 };
 
-var affordableHousing;
 
-$.when($.get('https://data.austintexas.gov/resource/wa68-dsqa.json')).then(function( data, textStatus, jqXHR ) {
- console.log( jqXHR.response );
- console.log( data );
- affordableHousing = data;
-})
+$.when($.get('https://data.austintexas.gov/resource/siyu-szxn.json')).then(
+  function( data, textStatus, jqXHR ) {
+      var affordableHousing = data;
+      _.each(affordableHousing, function(af) {
+        var loc = af.location_1
+        if (loc !== undefined && loc.hasOwnProperty('latitude') && loc.hasOwnProperty('longitude')) {
+          map.addLayer(L.circle([loc.latitude, loc.longitude], (af.affordable_units)));
+        }
+
+      })
+});
 
 censusModule.GEORequest(request, callback);
