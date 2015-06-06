@@ -1,4 +1,3 @@
-console.log('\'Allo \'Allo!');
 var sdk = new CitySDK();
 var censusModule = sdk.modules.census;
 
@@ -6,9 +5,7 @@ censusModule.enable("28d40d74c74b4be0554772cbc339ee99662fc2bf");
 
 map = L.map('map-canvas').setView([30.2500, -97.7500], 10);
 
-// map.data.setStyle({
-//     fillColor: 'blue'
-// });
+var mapLayers = {};
 
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
             attribution: '&copy; Map tiles by MAPC',
@@ -80,13 +77,15 @@ var callback = function(response) {
 $.when($.get('https://data.austintexas.gov/resource/siyu-szxn.json')).then(
   function( data, textStatus, jqXHR ) {
       var affordableHousing = data;
+      housingLayor = [];
       _.each(affordableHousing, function(af) {
         var loc = af.location_1
         if (loc !== undefined && loc.hasOwnProperty('latitude') && loc.hasOwnProperty('longitude')) {
-          map.addLayer(L.circle([loc.latitude, loc.longitude], (af.affordable_units)));
+          housingLayor.push(L.circle([loc.latitude, loc.longitude], (af.affordable_units)));
         }
-
-      })
+      });
+      mapLayers['affordableHousing'] = L.layerGroup(housingLayor);
+      map.addLayer(mapLayers['affordableHousing']);
 });
 
 censusModule.GEORequest(request, callback);
