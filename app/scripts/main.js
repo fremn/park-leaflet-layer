@@ -22,9 +22,36 @@ var request = {
     "level": "county",
     "sublevel":true,
     "variables":[
-		'income'
+		'age'
     ]
 };
+
+var polygonOptions = {	
+	color: "red", 
+	fillColor: "#f03"
+};
+
+function getColor(d) {
+    return d < 20  ? '#800026' :
+           d < 25  ? '#BD0026' :
+           d < 30  ? '#E31A1C' :
+           d < 35  ? '#FC4E2A' :
+           d < 40  ? '#FD8D3C' :
+           d < 45  ? '#FEB24C' :
+           d < 50  ? '#FED976' :
+                     '#FFEDA0';
+}
+
+function style(age) {
+    return {
+        fillColor: getColor(parseInt(age ? age : '0')),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
 
 var callback = function(response) {
     var features = response.features;
@@ -36,6 +63,9 @@ var callback = function(response) {
 			return [data[1],data[0]];
 		});
 		L.polygon(coords, {color: "#A6CFD5", weight: 1}).addTo(map);
+		var age = props.age;
+		console.log(age);
+		L.polygon(coords, style(age)).addTo(map);
 		//var myLatlng = new google.maps.LatLng(lat,lng);
 		//console.log(props);
 		//L.marker([lat, lng]).addTo(map);
@@ -46,5 +76,13 @@ var callback = function(response) {
 		});*/
     });
 };
+
+var affordableHousing;
+
+$.when($.get('https://data.austintexas.gov/resource/wa68-dsqa.json')).then(function( data, textStatus, jqXHR ) {
+ console.log( jqXHR.response );
+ console.log( data );
+ affordableHousing = data;
+})
 
 censusModule.GEORequest(request, callback);
