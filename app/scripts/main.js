@@ -62,14 +62,6 @@ var callback = function(response) {
 		});
 		var age = props.age;
 		L.polygon(coords, style(age)).addTo(map).bringToBack();
-		//var myLatlng = new google.maps.LatLng(lat,lng);
-		//console.log(props);
-		//L.marker([lat, lng]).addTo(map);
-		/*var marker = new google.maps.Marker({
-			position: myLatlng,
-			map: map,
-			title: props.NAME
-		});*/
     });
 };
 
@@ -79,7 +71,7 @@ $.when($.get('https://data.austintexas.gov/resource/siyu-szxn.json')).then(
       var affordableHousing = data;
       housingLayor = [];
       _.each(affordableHousing, function(af) {
-        var loc = af.location_1
+        var loc = af.location_1;
         if (loc !== undefined && loc.hasOwnProperty('latitude') && loc.hasOwnProperty('longitude')) {
           housingLayor.push(L.circle([loc.latitude, loc.longitude], (af.affordable_units)));
         }
