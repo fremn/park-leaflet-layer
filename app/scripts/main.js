@@ -1,5 +1,24 @@
 var sdk = new CitySDK();
 var censusModule = sdk.modules.census;
+var PARK_COLOR = '#2DCB70';
+
+var parkData;
+d3.json("json/parks.json", function(error, json) {
+  if (error) return console.warn(error);
+  parkData = json;
+  _.each(parkData,function(park){
+  	var coords = flipCoords(park.geometry);
+    // var shape = L.mapbox.featureLayer().setGeoJSON(turf.polygon(coords));
+    // shape.addTo(map);
+    L.polygon(coords, {color:PARK_COLOR, fillColor: PARK_COLOR, weight: 1}).addTo(map);
+    var parkToBuffer = turf.polygon(park.geometry);
+    //console.log(parkToBuffer);
+    var buffer = turf.buffer(parkToBuffer, 0.25, 'miles');
+    var collection = turf.featurecollection([buffer, parkToBuffer]);
+    //collection.addTo(map);
+    console.log(collection);
+  });
+});
 
 censusModule.enable("28d40d74c74b4be0554772cbc339ee99662fc2bf");
 
@@ -42,6 +61,7 @@ function getColor(d) {
                      '#FFEDA0';
 }
 
+
 function style(age) {
     return {
         fillColor: getColor(parseInt(age ? age : '0')),
@@ -53,29 +73,28 @@ function style(age) {
     };
 }
 
-var callback = function(response) {
-    var features = response.features;
-    _.each(features,function(feature){
+var tractCallback = function(err,response) {
+ //    var datas = _.pluck(_.pluck(features,'properties'),'age').sort();
+ //    console.log(datas.sort());
+ //    var d3Color = d3.scale.threshold()
+	// 				.domain(datas)
+	// 			    .range(colorbrewer.RdBu[9]);
+
+	// console.log(d3Color.range());
+    _.each(response,function(feature){
     	var props = feature.properties;
-		var lat = parseFloat(props.CENTLAT);
-		var lng = parseFloat(props.CENTLON);
-		var coords = feature.geometry.coordinates[0].map(function(data){
-			return [data[1],data[0]];
-		});
+		var coords = flipCoords(feature.geometry.coordinates[0]);
 		L.polygon(coords, {color: "#A6CFD5", weight: 1}).addTo(map);
-		var age = props.age;
-		console.log(age);
-		L.polygon(coords, style(age)).addTo(map);
-		//var myLatlng = new google.maps.LatLng(lat,lng);
-		//console.log(props);
-		//L.marker([lat, lng]).addTo(map);
-		/*var marker = new google.maps.Marker({
-			position: myLatlng,
-			map: map,
-			title: props.NAME		  
-		});*/
+		L.polygon(coords, style(props.age)).addTo(map).bringToBack();
+
     });
 };
+
+function flipCoords(coords){
+	return coords.map(function(data){
+		return [data[1],data[0]];
+	});
+}
 
 var affordableHousing;
 
@@ -85,4 +104,6 @@ $.when($.get('https://data.austintexas.gov/resource/wa68-dsqa.json')).then(funct
  affordableHousing = data;
 })
 
-censusModule.GEORequest(request, callback);
+// censusModule.GEORequest(request, callback);
+
+d3.json("json/tracts.json", tractCallback);
