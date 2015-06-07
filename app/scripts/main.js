@@ -52,32 +52,46 @@ function style(age) {
 }
 
 var callback = function(response) {
+    var tractAges = []
     var features = response.features;
     _.each(features,function(feature){
-    	var props = feature.properties;
-		var lat = parseFloat(props.CENTLAT);
-		var lng = parseFloat(props.CENTLON);
-		var coords = feature.geometry.coordinates[0].map(function(data){
-			return [data[1],data[0]];
-		});
-		var age = props.age;
-		L.polygon(coords, style(age)).addTo(map).bringToBack();
+      	var props = feature.properties;
+  		var lat = parseFloat(props.CENTLAT);
+  		var lng = parseFloat(props.CENTLON);
+  		var coords = feature.geometry.coordinates[0].map(function(data){
+  			return [data[1],data[0]];
+  		});
+  		var age = props.age;
+  		tractAges.push(L.polygon(coords, style(age)))
     });
+    makeLayerGroup('medianAge', tractAges)
 };
 
+function makeLayerGroup(name, layerCollection) {
+  mapLayers[name] = L.layerGroup(layerCollection);
+  mapLayerState('show', name)
+}
 
 $.when($.get('https://data.austintexas.gov/resource/siyu-szxn.json')).then(
   function( data, textStatus, jqXHR ) {
       var affordableHousing = data;
-      housingLayor = [];
+      var housing = [];
       _.each(affordableHousing, function(af) {
         var loc = af.location_1;
         if (loc !== undefined && loc.hasOwnProperty('latitude') && loc.hasOwnProperty('longitude')) {
-          housingLayor.push(L.circle([loc.latitude, loc.longitude], (af.affordable_units)));
+          housing.push(L.circle([loc.latitude, loc.longitude], (af.affordable_units)));
         }
       });
-      mapLayers['affordableHousing'] = L.layerGroup(housingLayor);
-      map.addLayer(mapLayers['affordableHousing']);
+      makeLayerGroup('affordableHousing', housing);
 });
+
+function mapLayerState(action, layer) {
+  if (action === 'show') {
+    map.addLayer(mapLayers[layer])
+  } else {
+    map.removeLayer(mapLayers[layer])
+  }
+  renderApp();
+}
 
 censusModule.GEORequest(request, callback);
