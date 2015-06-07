@@ -27,11 +27,14 @@ var request = {
     ]
 };
 
+<<<<<<< HEAD
+=======
 var polygonOptions = {
 	color: "red",
 	fillColor: "#f03"
 };
 
+>>>>>>> ce41b08f79aa0742d6a1f8439ee3138c45aeaa00
 function getColor(d) {
     return d < 20  ? '#800026' :
            d < 25  ? '#BD0026' :
@@ -65,14 +68,6 @@ var callback = function(response) {
 		});
 		var age = props.age;
 		L.polygon(coords, style(age)).addTo(map).bringToBack();
-		//var myLatlng = new google.maps.LatLng(lat,lng);
-		//console.log(props);
-		//L.marker([lat, lng]).addTo(map);
-		/*var marker = new google.maps.Marker({
-			position: myLatlng,
-			map: map,
-			title: props.NAME
-		});*/
     });
 };
 
@@ -90,3 +85,19 @@ $.when($.get('https://data.austintexas.gov/resource/siyu-szxn.json')).then(
 });
 
 censusModule.GEORequest(request, callback);
+
+
+// Loading Data with D3
+var buildingUnits;
+
+queue()
+  .defer(d3.csv, "data/building-units.csv")
+  .await(analyze);
+
+function analyze(error, buildings) {
+  if(error) { console.log(error); }
+
+  buildingUnits = buildings;
+
+  console.log(buildingUnits[0])
+}
