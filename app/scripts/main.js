@@ -72,3 +72,19 @@ $.when($.get('https://data.austintexas.gov/resource/wa68-dsqa.json')).then(funct
 })
 
 censusModule.GEORequest(request, callback);
+
+
+// Loading Data with D3
+var buildingUnits;
+
+queue()
+  .defer(d3.csv, "data/building-units.csv")
+  .await(analyze);
+
+function analyze(error, buildings) {
+  if(error) { console.log(error); }
+
+  buildingUnits = buildings;
+
+  console.log(buildingUnits[0])
+}
