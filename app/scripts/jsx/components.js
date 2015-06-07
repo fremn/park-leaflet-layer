@@ -7,14 +7,17 @@ var MapLayerToggle = React.createClass({
   },
   render: function(){
     return (
-      <li>
-        <button onClick={this.showLayer}>
-         {this.props.layerName} On
-        </button>
-        <button onClick={this.hideLayer}>
-         {this.props.layerName} off
-        </button>
-      </li>
+      <div className='on-off-groups'>
+        <h4>{this.props.layerName}</h4>
+        <div className="btn-group btn-group-sm" role="group">
+          <button type="button" className="btn btn-default" onClick={this.showLayer}>
+            On
+          </button>
+          <button type="button" className="btn btn-default" onClick={this.hideLayer}>
+            Off
+          </button>
+        </div>
+      </div>
     )
   }
 })
@@ -31,9 +34,9 @@ var MapControls = React.createClass({
     });
 
     return (
-      <ul>
+      <div className="btn-toolbar" role="toolbar" >
         {layers}
-      </ul>
+      </div>
     )
   }
 });
